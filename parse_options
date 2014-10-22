@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+# Argument parser for --long-options
+# 
+# Example:
+#  $ cat example
+#  #!/usr/bin/env bash
+#  source parse_options
+#  
+#  options[foo]="foo default"
+#  options_flags=('verbose')
+#  parse_options "$@"
+#  
+#  for k in "${!options[@]}"; do
+#    echo "$k:${options[$k]}"
+#  done
+#
+#  $ ./example --verbose --bar --bar-value --empty-option ''
+#  verbose:on
+#  bar:--bar-value
+#  foo:12
+#  empty-option:
+
+declare -A options
+declare -a options_flags
+
+function parse_options {
+  # Settings (from environment):
+  #   options:         Associative array with defaults.
+  #                    options[key]=value corresponds to:
+  #                    --key value
+  #
+  #   options_force:   Only allow arguments already in defaults array.
+  #
+  #   options_flags:   Array of options that don't take a value
+  #                    the value will be set to 'on'
+
+  local arg
+  local flag
+  local key=''
+
+  for arg in "$@"; do
+
+    # Know the key, take the value
+    if [[ -n $key ]]; then
+      options[$key]="${arg}"
+      key=''
+      continue
+    fi
+
+    # Enforce the '--key value' format
+    if [[ ${arg:0:2} != '--' ]]; then
+      echo "[$0] Invalid argument. Name expected, got value: $arg" 1>&2
+      return 1
+    fi
+
+    key="${arg:2}"
+
+    # Is it a flag?
+    for flag in "${options_flags[@]}"; do
+      if [[ $flag == $key ]]; then
+        options[$key]='on'
+        key=''
+        continue 2
+      fi
+    done
+
+    # Only permit arguments defined in defaults array?
+    if [[ ${options_force:0:1} == 'y' && -z ${options[$key]+_} ]]; then
+      echo "[$0] Invalid option ${arg}" 1>&2;
+      return 2
+    fi
+  done
+}
