@@ -29,7 +29,7 @@ Example
 
 ## Settings
 
-The settings are provided through the environment
+The settings are provided through shell variables
 
 ### options
 
