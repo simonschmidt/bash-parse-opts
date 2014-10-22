@@ -1,7 +1,9 @@
 Bash (long) option parser
 ===============
 
-Argument parser for --long-options
+Simple argument parser for --long-options. Nothing else, no usage and no -s -h -o -r -t
+
+It does however support values that are empty or begin with --
 
 Example
 ---------------
@@ -44,7 +46,7 @@ Array of options to be interpreted as flags, i.e. that have no value
 
 ### options\_force
 
-If set to 'yes' an error will be thrown on unknown options
+If set to 'yes', returns error on unknown options
 
     options_force='yes'
 
