@@ -23,7 +23,7 @@ Example
     $ ./example --verbose --bar --bar-value --empty-option ''
     verbose:on
     bar:--bar-value
-    foo:12
+    foo:foo default
     empty-option:
 
 
